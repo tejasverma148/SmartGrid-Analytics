@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="SmartGrid Analytics multi-profile energy monitoring and simulation prototype">
+  <title>SmartGrid Analytics | Energy Management</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="side-brand"><div class="brand-mark">S<span>G</span></div><div class="brand-copy"><strong>SmartGrid</strong><small>ENERGY MANAGEMENT</small></div></div>
+    <button class="sidebar-pin" id="menuBtn" aria-label="Pin or open navigation" aria-expanded="false"><span class="hamburger"><i></i><i></i><i></i></span><span class="nav-text">Navigation</span></button>
+    <div class="nav-caption">MAIN MENU</div>
+    <nav class="nav-list">
+      <button class="nav-link active" data-page="dashboard" title="Dashboard"><span class="nav-icon">▦</span><span class="nav-text">Dashboard</span></button>
+      <button class="nav-link" data-page="areas" title="Areas and equipment"><span class="nav-icon">▤</span><span class="nav-text">Areas & equipment</span></button>
+      <button class="nav-link" data-page="digital-twin" title="3D Digital Twin"><span class="nav-icon">⬡</span><span class="nav-text">3D Digital Twin</span></button>
+      <button class="nav-link" data-page="monitoring" title="Live monitoring"><span class="nav-icon">⌁</span><span class="nav-text">Live monitoring</span></button>
+      <button class="nav-link" data-page="analytics" title="Analytics and reports"><span class="nav-icon">◫</span><span class="nav-text">Analytics & reports</span></button>
+      <button class="nav-link" data-page="alerts" title="Alerts and actions"><span class="nav-icon">♢</span><span class="nav-text">Alerts & actions</span><span class="nav-count" id="navAlertCount">0</span></button>
+      <button class="nav-link" data-page="simulation" title="Simulation lab"><span class="nav-icon">⏵</span><span class="nav-text">Simulation lab</span></button>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="nav-link" data-page="settings" title="Tariff and thresholds"><span class="nav-icon">⚙</span><span class="nav-text">Tariff & thresholds</span></button>
+      <button class="sidebar-profile profile-editor" id="profileEditor" type="button" title="Change displayed user name"><span class="profile-avatar" id="profileAvatar">U</span><span class="profile-copy"><b id="sidebarProfile">Set your name</b><small id="sidebarProperty">Campus profile</small></span><span class="profile-edit-icon" aria-hidden="true">✎</span></button>
+    </div>
+  </aside>
+  <div class="mobile-scrim" id="scrim"></div>
+  <main class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-button" id="mobileMenuBtn" aria-label="Open navigation"><span></span><span></span><span></span></button>
+        <div class="mobile-brand">SmartGrid <span>Analytics</span></div>
+        <div class="breadcrumb"><span>Workspace</span><b id="currentPageLabel">Dashboard</b></div>
+      </div>
+      <div class="topbar-actions">
+        <label class="profile-switch"><span>PROFILE</span><select id="profileSelect" aria-label="Choose property profile"><option value="campus">Campus / College</option><option value="home">Residential / Home</option></select></label>
+        <div class="sync-state"><i id="connectionDot"></i><span id="connectionText">Connecting</span></div>
+        <button class="icon-button" id="themeBtn" title="Toggle dark mode" aria-label="Toggle dark mode">◐</button>
+        <button class="avatar-button" id="tourReplay" title="Replay quick tour">?</button>
+      </div>
+    </header>
+
+    <div class="page-viewport" id="pageViewport">
+      <!-- DASHBOARD -->
+      <section class="page active" data-page="dashboard">
+        <div class="page-heading">
+          <div><div class="eyebrow">ENERGY INTELLIGENCE <span class="live-pill"><i></i> DEMO ACTIVE</span></div><h1 id="dashboardTitle">Campus energy dashboard</h1><p id="dashboardSubtitle">Understand where energy is used, what is changing and where savings may be possible.</p></div>
+          <div class="heading-actions"><span class="updated-label" id="updatedLabel">● Simulated data</span><button class="button button-primary" id="dashboardExport">↓ <span>Export snapshot</span></button></div>
+        </div>
+        <div class="kpi-grid">
+          <article class="kpi-card"><div class="kpi-label">DAILY ENERGY USE <span class="kpi-icon teal">ϟ</span></div><div class="kpi-value" id="dailyUnits">— <small>kWh</small></div><div class="kpi-note">Across all monitored areas</div><div class="mini-bar"><i style="width:74%"></i></div></article>
+          <article class="kpi-card"><div class="kpi-label">MONTHLY PROJECTION <span class="kpi-icon blue">▥</span></div><div class="kpi-value" id="monthlyUnits">— <small>kWh</small></div><div class="kpi-note">Based on current daily profile × 30</div><div class="mini-bar blue-bar"><i style="width:62%"></i></div></article>
+          <article class="kpi-card featured"><div class="kpi-label">ESTIMATED MONTHLY BILL <span class="kpi-icon amber">₹</span></div><div class="kpi-value" id="monthlyBill">—</div><div class="kpi-note"><span id="tariffLabel">Illustrative tariff</span> · editable in settings</div><div class="mini-bar gold-bar"><i style="width:82%"></i></div></article>
+          <article class="kpi-card"><div class="kpi-label">PEAK DEMAND <span class="kpi-icon violet">⌁</span></div><div class="kpi-value" id="peakDemand">— <small>W</small></div><div class="kpi-note" id="peakNote">Current simulated peak</div><div class="mini-bar purple-bar"><i id="peakBar" style="width:48%"></i></div></article>
+        </div>
+        <div class="dashboard-main-grid">
+          <article class="panel chart-panel">
+            <div class="panel-heading"><div><span class="section-tag">DEMAND PATTERN</span><h2>Power consumption trend</h2><p>Change the load in Simulation Lab to see this chart respond.</p></div><button class="subtle-button" data-goto="monitoring">View monitoring ↗</button></div>
+            <div class="chart-metrics"><div><small>Average</small><b id="avgPower">— W</b></div><div><small>Peak</small><b id="chartPeak">— W</b></div><div><small>Trend</small><b id="trendBadge" class="trend-neutral">—</b></div></div><p class="trend-detail" id="trendDetail">Trend explanation will appear here.</p>
+            <div class="line-chart" id="dashboardChart" aria-label="Power consumption chart"></div>
+            <div class="chart-legend"><span><i class="legend-dot"></i> Simulated demand</span><span id="chartRangeLabel">12 sample points</span></div>
+          </article>
+          <article class="panel intelligence-panel">
+            <div class="panel-heading"><div><span class="section-tag">DEMAND INTELLIGENCE</span><h2>System health</h2><p>Automatic analysis of the current demand readings.</p></div><span class="engine-badge">ANALYTICS</span></div>
+            <div class="health-content"><div class="health-ring" id="healthRing"><div><b id="healthScore">—</b><small>/ 100</small></div></div><div><b id="healthTitle">Calculating demand</b><p id="healthText">Reading the current simulated load profile.</p></div></div>
+            <div class="threshold-list"><div><span><i class="dot-normal"></i> Normal band</span><b id="normalCount">0</b></div><div><span><i class="dot-high"></i> High band</span><b id="highCount">0</b></div><div><span><i class="dot-over"></i> Overload band</span><b id="overCount">0</b></div></div>
+            <div class="threshold-note">Thresholds are configurable in Tariff & thresholds. They are demonstration rules, not electrical safety certification.</div>
+          </article>
+        </div>
+        <div class="dashboard-bottom-grid">
+          <article class="panel"><div class="panel-heading"><div><span class="section-tag">ENERGY DISTRIBUTION</span><h2>Where energy goes</h2><p>Estimated daily energy by monitored area.</p></div><button class="text-button" data-goto="areas">Explore areas →</button></div><div class="distribution-layout"><div class="donut-chart" id="energyDonut"><div><b id="donutTotal">—</b><small>kWh / day</small></div></div><div class="donut-legend" id="donutLegend"></div></div></article>
+          <article class="panel"><div class="panel-heading"><div><span class="section-tag">NEEDS ATTENTION</span><h2>Latest alerts</h2><p>Insights generated from the current readings.</p></div><button class="text-button" data-goto="alerts">All alerts →</button></div><div class="alert-preview" id="dashboardAlerts"></div></article>
+        </div>
+        <div class="transparency-note"><span>ⓘ</span><div><b>Prototype data disclosure</b><p>All energy figures and readings are simulated for demonstration. No real meter, sensor, home appliance or MITS infrastructure is connected. Bill estimates use the editable illustrative tariff.</p></div></div>
+      </section>
+
+      <!-- AREAS -->
+      <section class="page" data-page="areas">
+        <div class="page-heading"><div><div class="eyebrow">PROPERTY STRUCTURE</div><h1 id="areasTitle">Areas & equipment</h1><p>Choose an area to inspect its estimated energy use, equipment mix and editable demonstration values.</p></div><span class="updated-label">AREA-LEVEL VIEW</span></div>
+        <div class="areas-layout"><div class="panel areas-list-panel"><div class="panel-heading"><div><span class="section-tag">MONITORED AREAS</span><h2 id="areaListTitle">All areas</h2></div><span class="count-chip" id="areaCount">0 areas</span></div><div class="area-cards" id="areaCards"></div></div>
+          <div class="panel area-detail-panel" id="areaDetail"><div class="empty-detail"><span>▤</span><h2>Select an area</h2><p>Choose a campus department or home room to see its breakdown.</p></div></div></div>
+      </section>
+
+      <!-- 3D DIGITAL TWIN -->
+      <section class="page" data-page="digital-twin">
+        <div class="page-heading"><div><div class="eyebrow">SPATIAL ENERGY VIEW</div><h1>3D Digital Twin</h1><p>Explore a three-dimensional model of the selected property. Select a room to inspect its simulated energy profile.</p></div><button class="subtle-button" id="twinResetView">↻ Reset view</button></div>
+        <div class="twin-layout">
+          <article class="panel twin-scene-panel">
+            <div class="twin-scene-top"><div><span class="section-tag">INTERACTIVE PROPERTY MODEL</span><h2 id="twinPropertyTitle">Smart home model</h2></div><div class="twin-legend"><span><i class="twin-dot normal"></i>Normal</span><span><i class="twin-dot warning"></i>Elevated</span><span><i class="twin-dot danger"></i>Limit exceeded</span></div></div>
+            <div class="twin-canvas-wrap"><canvas id="twinCanvas" aria-label="Interactive three-dimensional energy model. Drag to rotate, scroll to zoom, click a room to inspect it."></canvas><div class="twin-canvas-hint">Drag to rotate <b>·</b> Scroll to zoom <b>·</b> Click a room</div></div>
+            <div class="twin-scene-foot"><span>3D geometry · room-level energy mapping</span><span>All readings are simulated</span></div>
+          </article>
+          <aside class="panel twin-info-panel"><div class="panel-heading"><div><span class="section-tag">SELECTED SPACE</span><h2 id="twinSelectedName">Select a room</h2><p id="twinSelectedCategory">Room details appear here</p></div></div>
+            <div class="twin-status normal" id="twinSelectedStatus">Within limit</div>
+            <div class="twin-stat-grid"><div class="twin-stat"><small>Daily energy</small><b id="twinSelectedEnergy">—</b></div><div class="twin-stat"><small>Peak demand</small><b id="twinSelectedPeak">—</b></div></div>
+            <div class="twin-equipment-head"><b>Equipment allocation</b><span>Estimated share</span></div><div id="twinEquipment" class="twin-equipment-list"></div>
+            <button class="button button-primary full-button" id="twinOpenArea">Edit area details ↗</button>
+          </aside>
+        </div>
+      </section>
+
+      <!-- MONITORING -->
+      <section class="page" data-page="monitoring">
+        <div class="page-heading"><div><div class="eyebrow">SIMULATED MONITORING</div><h1>Live monitoring</h1><p>Review the current sample stream and electrical values calculated by the prototype.</p></div><span class="refresh-status"><i></i> Auto refresh · 5 sec</span></div>
+        <div class="monitor-kpis" id="monitorKpis"></div>
+        <div class="panel monitor-chart-panel"><div class="panel-heading"><div><span class="section-tag">POWER STREAM</span><h2>Recent demand readings</h2><p>These points update after a scenario or manual load is applied.</p></div><button class="subtle-button" data-goto="simulation">Change simulated load ↗</button></div><div class="line-chart large-chart" id="monitorChart"></div></div>
+        <div class="panel table-panel"><div class="panel-heading"><div><span class="section-tag">READING LOG</span><h2>Sample readings</h2><p>Voltage is held at a nominal demonstration value of 230 V.</p></div><span class="count-chip" id="readingCount">0 readings</span></div><div class="table-scroll"><table><thead><tr><th>POINT</th><th>POWER</th><th>VOLTAGE</th><th>CALCULATED CURRENT</th><th>DEMAND BAND</th></tr></thead><tbody id="readingRows"></tbody></table></div></div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section class="page" data-page="analytics">
+        <div class="page-heading"><div><div class="eyebrow">PERFORMANCE & INSIGHTS</div><h1>Analytics & reports</h1><p>Translate simulated readings and area data into understandable comparisons.</p></div><button class="button button-primary" id="analyticsExport">↓ <span>Export CSV</span></button></div>
+        <div class="analytics-grid"><article class="panel"><div class="panel-heading"><div><span class="section-tag">ENERGY BY AREA</span><h2>Consumption comparison</h2><p>Daily energy estimate, highest to lowest.</p></div></div><div class="comparison-chart" id="comparisonChart"></div></article>
+          <article class="panel"><div class="panel-heading"><div><span class="section-tag">PROFILE SUMMARY</span><h2>At a glance</h2></div></div><div class="summary-stats" id="analyticsSummary"></div><div class="insight-box" id="analyticsInsight"></div></article></div>
+        <article class="panel trend-panel"><div class="panel-heading"><div><span class="section-tag">DEMAND BEHAVIOUR</span><h2>Trend analysis</h2><p>Comparison of earlier and later readings, with configurable demand bands.</p></div></div><div class="trend-cards" id="trendCards"></div><div class="method-note" id="methodNote">Analytics method will appear here.</div></article>
+      </section>
+
+      <!-- ALERTS -->
+      <section class="page" data-page="alerts">
+        <div class="page-heading"><div><div class="eyebrow">OBSERVATIONS & ACTIONS</div><h1>Alerts & actions</h1><p>Understand why a condition was raised and what a user could investigate next.</p></div><span class="count-chip" id="alertSummaryCount">0 observations</span></div>
+        <div class="alert-banner" id="alertBanner"><b>Evaluating current profile…</b><span>Rule-based simulated observations</span></div>
+        <div class="alert-list-full" id="alertsFull"></div>
+        <div class="panel action-guide"><div class="panel-heading"><div><span class="section-tag">PRACTICAL WORKFLOW</span><h2>How to respond to an alert</h2><p>These are investigation suggestions, not remote control actions.</p></div></div><div class="action-steps"><div><b>01</b><strong>Verify the reading</strong><p>Check whether the simulated demand is representative of the area and time period.</p></div><div><b>02</b><strong>Inspect the area</strong><p>Open the area detail and review which equipment categories contribute to estimated use.</p></div><div><b>03</b><strong>Test a change</strong><p>Use Simulation Lab to model a lower or higher load and compare the resulting charts and bill estimate.</p></div></div></div>
+      </section>
+
+      <!-- SIMULATION -->
+      <section class="page" data-page="simulation">
+        <div class="page-heading"><div><div class="eyebrow">WHAT-IF PLAYGROUND</div><h1>Simulation lab</h1><p>Create controlled sample-demand patterns or add a custom load. The dashboard, monitoring, analytics and alerts then update from the resulting readings.</p></div><span class="sandbox-label">SANDBOX · NO REAL DEVICES</span></div>
+        <div class="simulation-grid"><article class="panel"><div class="panel-heading"><div><span class="section-tag">QUICK SCENARIOS</span><h2>Choose a demand condition</h2><p>These buttons create controlled test readings. The system—not the button—automatically detects whether those readings are normal, high or overload.</p></div></div><div class="scenario-cards"><button class="scenario-card" data-mode="Normal"><span class="scenario-symbol calm">◉</span><b>Normal usage</b><small>Typical profile demand</small></button><button class="scenario-card" data-mode="High Consumption"><span class="scenario-symbol warm">▤</span><b>High consumption</b><small>Sustained elevated use</small></button><button class="scenario-card" data-mode="Power Spike"><span class="scenario-symbol spike">ϟ</span><b>Sudden power spike</b><small>One short demand surge</small></button><button class="scenario-card" data-mode="Potential Overload"><span class="scenario-symbol danger">⚑</span><b>Overload condition</b><small>Repeated high-band demand</small></button></div><div class="scenario-current" id="scenarioCurrent">Current mode: Normal</div></article>
+          <article class="panel manual-panel"><div class="panel-heading"><div><span class="section-tag">MANUAL INPUT</span><h2>Add a simulated load</h2><p>Add a simulated load to the current property and specify how many hours it operates each day.</p></div></div><label class="field-label" for="customWatts">Additional simulated load (watts)</label><div class="input-with-unit"><input id="customWatts" type="number" min="0" max="100000" step="100" value="1000"><span>W</span></div><input type="range" id="customWattsRange" min="0" max="30000" step="100" value="1000"><div class="range-labels"><span>0 W</span><span>30,000 W</span></div><label class="field-label field-gap" for="customHours">Operating hours per day</label><input class="text-input" id="customHours" type="number" min="0" max="24" step="0.5" value="2"><button class="button button-primary full-button" id="applyCustomLoad">Apply additional load</button><p class="field-hint">This adds the selected load on top of the current profile. Additional daily energy = watts × operating hours ÷ 1,000, so the estimated monthly energy and bill change too.</p></article></div>
+        <div class="simulation-result-grid"><article class="panel"><div class="panel-heading"><div><span class="section-tag">INSTANT RESULT</span><h2>Current simulation output</h2></div></div><div class="simulation-output" id="simulationOutput"></div></article><article class="panel"><div class="panel-heading"><div><span class="section-tag">TRY THIS</span><h2>Demonstration challenges</h2></div></div><div class="challenge-list"><button data-challenge="spike"><span>01</span><span><b>Create a sudden spike</b><small>Watch the peak and overload count.</small></span><i>→</i></button><button data-challenge="bill"><span>02</span><span><b>Increase one area's usage</b><small>See monthly units and estimated bill change.</small></span><i>→</i></button><button data-challenge="profile"><span>03</span><span><b>Compare home vs campus</b><small>Switch profiles without restarting the app.</small></span><i>→</i></button></div></article></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page" data-page="settings">
+        <div class="page-heading"><div><div class="eyebrow">CONFIGURATION</div><h1>Tariff & thresholds</h1><p>Edit the illustrative tariff and demand thresholds used by the calculations.</p></div><button class="subtle-button" id="replayTour">Replay guided tour ↗</button></div>
+        <div class="settings-grid"><article class="panel"><div class="panel-heading"><div><span class="section-tag">BILL ESTIMATION</span><h2>Electricity tariff</h2><p>Used to calculate the monthly bill estimate.</p></div></div><label class="field-label" for="tariffInput">Tariff per kWh (₹)</label><div class="input-with-unit"><span>₹</span><input id="tariffInput" type="number" min="0" max="1000" step="0.1" value="8"></div><p class="field-hint">This is an editable illustrative rate, not a verified utility tariff.</p></article>
+          <article class="panel"><div class="panel-heading"><div><span class="section-tag">DEMAND CLASSIFICATION</span><h2>Automatic demand detection</h2><p>Every generated reading is checked against these limits. The dashboard and alerts update after you save.</p></div></div><label class="field-label" for="normalThreshold">Normal band upper limit (W)</label><input class="text-input" id="normalThreshold" type="number" min="1" max="100000" value="15000"><label class="field-label field-gap" for="overloadThreshold">Overload band begins above (W)</label><input class="text-input" id="overloadThreshold" type="number" min="2" max="100000" value="20500"><p class="field-hint">High consumption is above the normal limit and at or below the overload limit. Area warning thresholds are edited separately in Areas & equipment.</p></article></div>
+        <div class="settings-actions"><button class="button button-primary" id="saveSettings">Save configuration</button><span id="settingsMessage" role="status"></span></div>
+        <article class="panel data-info-panel"><div class="panel-heading"><div><span class="section-tag">DATA MODEL</span><h2>About this prototype</h2></div></div><div class="data-info-grid"><div><b>Campus profile</b><p>Academic departments, hostels, food services, auditorium, sports and shared facilities.</p></div><div><b>Home profile</b><p>Living room, bedrooms, kitchen, work area, bathrooms, laundry and outdoor loads.</p></div><div><b>Calculation approach</b><p>Area energy is summed for daily and monthly estimates. Demand readings are compared across two halves of the sample period and classified using configurable power bands.</p></div><div><b>Data limitations</b><p>Inputs are simulated and editable. Equipment shares are estimated allocations, not sensor measurements or actual device telemetry.</p></div></div></article>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- First-use guide -->
+<div class="tour-backdrop" id="tourBackdrop" aria-hidden="true">
+  <div class="tour-modal" role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+    <div class="tour-top"><span class="tour-mark">SG</span><span class="tour-step" id="tourStep">WELCOME · 1 OF 4</span><button class="tour-close" id="tourSkip" aria-label="Skip tour">×</button></div>
+    <div class="tour-progress"><i id="tourProgress" style="width:25%"></i></div>
+    <div id="tourContent"></div>
+    <div class="tour-footer"><button class="text-button" id="tourBack" hidden>← Back</button><button class="button button-primary" id="tourNext">Get started →</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="/app.js"></script>
+<script src="/digital-twin.js"></script>
+</body>
+</html>
